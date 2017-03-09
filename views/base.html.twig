@@ -4,32 +4,47 @@
         <meta charset="utf-8">
         <title></title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <link rel="stylesheet" href="/css/styles.css" type="text/css">
+        <link rel="stylesheet" href="/../css/styles.css" type="text/css">
+
+        <link href="https://fonts.googleapis.com/css?family=Istok+Web" rel="stylesheet">
+
+        <script src='/../js/jquery-3.1.1.min.js'></script>
+        <script src='/../js/scripts.js'></script>
+
     </head>
     <body>
         <div class="container-fluid">
             <div class="navbar">
                 <ul class="nav-ul">
                   <li class="nav-li"><a href="/">Home</a></li>
-                  <li class="nav-li"><a href="#">About</a></li>
-                  <li class="nav-li"><a href="#">Contact</a></li>
+                  <li class="nav-li"><a href="/about">About</a></li>
+                  {%if session['user'] is not empty%}<li class="nav-li"><a href="/event_creator/{{session['user'].getId}}">Create event</a></li>{%endif%}
                 </ul>
 
-                <form class="nav-login" action="index.html" method="post">
-                  <input type="text" name="username" placeholder="username"value="">
-                  <input type="password" name="password" placeholder="password" value="">
-                  <button class="btn" type="submit" name="button">Sign in</button>
+            {% if session['user'] is empty%}
+                <div id="nav-login" class="nav-login">
+                  <input id="username" type="text" name="username" placeholder="username" required>
+                  <input id="password" type="password" name="password" placeholder="password" required>
+                  <button id="nav-login-button" class="btn btn-top" type="submit" name="button">Sign in</button>
+                  <a href="/sign-up" class="btn btn-top" role="button" name="button">Sign up</a></br>
+                  <small id="error-text"><small> <!--error message goes here-->
+                </div>
+            {% else %}
+            <form action="/sign_out/{{session['user'].getId}}" method="post">
+                <small class='text-muted'>Now signed in as <a href="/user/{{session['user'].getId}}"> {{session['user'].getName}} </a></small>
+                    <button class="btn btn-xs btn-top" type="submit" name="button">Sign out</button>
                 </form>
+            {% endif %}
             </div>
 
-            <div class="jumbotron">
-                <h1>RSVParty</h1>
+            <div id="logotron">
+                <img id="logo" src="/../img/rsvpartylogo.png" alt="fun stuff">
             </div>
         </div>
         <div class="container">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <div class="page-header">
+                    <div class="contentbox">
                         {% block content %}
                         {% endblock %}
                     </div>

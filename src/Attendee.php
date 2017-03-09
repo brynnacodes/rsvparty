@@ -1,17 +1,20 @@
 <?php
 
-    require_once 'Task.php';
 
     class Attendee {
 
         private $name;
+        private $email;
         private $event_id;
+        private $rsvp;
         private $id;
 
-        function __construct($name, $event_id, $id = null)
+        function __construct($name, $email, $event_id, $rsvp = 0, $id = null)
         {
             $this->name = $name;
+            $this->email = $email;
             $this->event_id = $event_id;
+            $this->rsvp = $rsvp;
             $this->id = $id;
         }
 
@@ -25,9 +28,29 @@
             $this->name = $new_name;
         }
 
+        function getEmail()
+        {
+            return $this->email;
+        }
+
+        function setEmail($new_email)
+        {
+            $this->email = $new_email;
+        }
+
         function getEventId()
         {
             return $this->event_id;
+        }
+
+        function setRsvp($rsvp)
+        {
+            $this->rsvp = $rsvp;
+        }
+
+        function getRsvp()
+        {
+            return $this->rsvp;
         }
 
         function getId()
@@ -37,8 +60,8 @@
 
         function save()
         {
-            $save = $GLOBALS['DB']->prepare("INSERT INTO attendees (name, event_id) VALUES (:name, :event_id);");
-            $save->execute([':name' => $this->getName(), ':event_id' => $this->getEventId()]);
+            $save = $GLOBALS['DB']->prepare("INSERT INTO attendees (name, email, event_id, rsvp) VALUES (:name, :email, :event_id, :rsvp);");
+            $save->execute([':name' => $this->getName(), ':email' => $this->getEmail(), ':event_id' => $this->getEventId(), ':rsvp' => $this->getRsvp()]);
             $this->id = $GLOBALS['DB']->lastInsertId();
         }
 
@@ -49,32 +72,30 @@
             $update->execute([':name' => $this->getName(), ':id' => $this->getId()]);
         }
 
+        function updateEmail($new_email)
+        {
+            $this->setEmail($new_email);
+            $update = $GLOBALS['DB']->prepare("UPDATE attendees SET email = :email WHERE id = :id;");
+            $update->execute([':email' => $this->getEmail(), ':id' => $this->getId()]);
+        }
+
+        function updateRsvp($new_rsvp)
+        {
+            $this->setRsvp($new_rsvp);
+            $update = $GLOBALS['DB']->prepare("UPDATE attendees SET rsvp = :rsvp WHERE id = :id;");
+            $update->execute([':rsvp' => $this->getRsvp(), ':id' => $this->getId()]);
+        }
+
         function delete()
         {
             $GLOBALS['DB']->exec("DELETE FROM attendees WHERE id = {$this->getId()};");
-            $GLOBALS['DB']->exec("DELETE FROM attendees_tasks WHERE attendee_id = {$this->getId()};");
-        }
-
-        function addTask($id)
-        {
-            $GLOBALS['DB']->exec("INSERT INTO attendees_tasks (attendee_id, task_id) VALUES ({$this->getId()}, {$id});");
-        }
-
-        function getTasks()
-        {
-            $returned_tasks = $GLOBALS['DB']->query("SELECT tasks.* FROM attendees
-                            JOIN attendees_tasks ON (attendees_tasks.attendee_id = attendees.id)
-                            JOIN tasks ON (tasks.id = attendees_tasks.task_id)
-                            WHERE attendees.id = {$this->getId()};");
-            $tasks = $returned_tasks->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, 'Task', ['name', 'description', 'event_id', 'id']);
-            return $tasks;
         }
 
         static function getAll()
         {
             $returned_attendees = $GLOBALS['DB']->query("SELECT * FROM attendees;");
             if ($returned_attendees) {
-                $attendees = $returned_attendees->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, 'Attendee', ['name', 'event_id', 'id']);
+                $attendees = $returned_attendees->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, 'Attendee', ['name', 'email', 'event_id', 'rsvp', 'id']);
             } else {
                 $attendees = [];
             }
@@ -84,8 +105,15 @@
         static function deleteAll()
         {
             $GLOBALS['DB']->exec("DELETE FROM attendees;");
-            $GLOBALS['DB']->exec("DELETE FROM attendees_tasks;");
         }
+
+        static function find($id)
+        {
+            $returned_attendee = $GLOBALS['DB']->query("SELECT * FROM attendees WHERE id = {$id};");
+            $attendee = $returned_attendee->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, 'Attendee', ['name', 'email', 'event_id', 'rsvp', 'id']);
+            return $attendee[0];
+        }
+
     }
 
 ?>

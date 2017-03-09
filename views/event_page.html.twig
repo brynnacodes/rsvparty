@@ -1,27 +1,100 @@
 {% extends "base.html.twig" %}
 {% block content%}
+<div class="contentbox">
+    <div class="row">
+        <div class="col col-6">
+           <div class="page-header">
+               <h2 class="events-header">{{event.getName}}</h2>
+               <h3 class="events-header2">Your host is {{session['user'].getName}}.</h3>
+           </div>
+            <h4>{{event.getDateTime}}</h4>
+            <blockquote>
+                <form class="" action="/event_page/{{event.getId}}/editdate_time" method="post">
+                    <input type="hidden" name="_method" value="patch">
+                    <label for="date_edit">Edit date:</label>
+                    <input id="date_edit" type="date" name="date" value="">
+                    <button class="btn btn-top" type="submit" name="button">edit</button>
+                </form>
+            </blockquote>
+            <h4>{{event.getLocation}}</h4>
+            <blockquote>
+                <form class="" action="/event_page/{{event.getId}}/edit_location" method="post">
+                    <input type="hidden" name="_method" value="patch">
+                    <label for="location_edit">Edit street address:</label>
+                    <input id="location_edit" type="text" name="location" placeholder="Enter your new address...">
 
-<style>
-     #map {
-      height: 400px;
-      width: 100%;
-     }
-  </style>
- <div id="map"></div>
-<script>
-   function initMap() {
-     var location = {lat: {{lat}}, lng: {{long}}};
-     var map = new google.maps.Map(document.getElementById('map'), {
-       zoom: 12,
-       center: location
-     });
-     var marker = new google.maps.Marker({
-       position: location,
-       map: map
-     });
-   }
- </script>
- <script async defer
- src="https://maps.googleapis.com/maps/api/js?key={{key}}&callback=initMap">
- </script>
+                    <button class="btn" type="submit" name="button">edit</button>
+                </form>
+            </blockquote>
+            <h4>{{event.getDescription}}</h4>
+            <blockquote>
+                <form class="" action="/event_page/{{event.getId}}/edit_description" method="post">
+                    <input type="hidden" name="_method" value="patch">
+                    <label for="description_edit">Edit description:</label>
+                    <input type="textarea" name="description">
+                    <button class="btn" type="submit" name="button">edit</button>
+                </form>
+            </blockquote>
+        </div>
+        <div class="col col-6">
+            <!--DO SHIT 4 MAIL HERE, MALES-->
+            <h3>Who would you like to invite?</h3>
+            <form id="attendee-form" action="/add_attendee/{{event.getId}}" class="form-group">
+                <label for="attendee-name">Name:</label>
+                <input id="attendee-name" name="attendee-name" type="text" required>
+                <label for="attendee-email">Email:</label>
+                <input id="attendee-email" name="attendee-email" type="text" required>
+                <button id="add-attendee-button" class="btn">Add</button>
+            </form>
+            <h5>To Invite</h5>
+            <ul id="attendees-to-invite">
+                {% for attendee in attendees %}
+                {% if attendee.getEmail != 'sent' %}
+                <li id="attendee{{attendee.getId}}">{{attendee.getName}}</li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+            <form action="/send_invites/{{event.getId}}" method="post">
+                <label for="subject-line">Subject line:</label>
+                <input id="subject-line" name="subject-line" type="text" required>
+                <label for="personal-message">Personal message:</label>
+                <textarea id="personal-message" name="personal-message" rows = '4' required></textarea>
+                <button class="btn" type="submit">Send Invites!</button>
+            </form>
+            <h5>Already invited:</h5>
+            <ul id="attendees-invited">
+                {% for attendee in attendees %}
+                {% if attendee.getEmail == 'sent' %}
+                <li id="attendee{{attendee.getId}}">{{attendee.getName}}</li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+    <div id="map"></div>
+    <script>
+        function initMap() {
+            var location = {lat: {{lat}}, lng: {{long}}};
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 12,
+                center: location
+            });
+            var marker = new google.maps.Marker({
+                position: location,
+                map: map
+            });
+        }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key={{key}}&callback=initMap">
+</script>
+
+
+</div>
 {% endblock %}

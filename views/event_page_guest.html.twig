@@ -1,0 +1,55 @@
+{% extends "base.html.twig" %}
+{% block content%}
+
+    {% for user in users%}
+        {% if event.getUserId is same as(user.getId) %}
+        <h3>{{user.getName}}</h3>
+        {%endif%}
+    {%endfor%}
+
+    <h2>{{event.getName}}</h2>
+    <h4>{{event.getDateTime}}</h4>
+    {% if attendees is not empty %}
+        {% for attendee in attendees %}
+            <h4>{{ attendee.getName }}</h4>
+        {% endfor %}
+    {% endif %}
+
+    <h4>RSVP for this event!</h4>
+    <form class="" action="/event_page/guest/{{event.getGuestKey}}/{{attendee.id}}/rsvp" method="post">
+        <select class="" name="rsvp">
+            <option value="1">yes</option>
+            <option value="0">no</option>
+        </select>
+        <button type="submit">rsvp</button>
+    </form>
+
+
+
+    <style>
+         #map {
+          height: 400px;
+          width: 100%;
+         }
+      </style>
+
+     <div id="map"></div>
+
+    <script>
+       function initMap() {
+         var location = {lat: {{lat}}, lng: {{long}}};
+         var map = new google.maps.Map(document.getElementById('map'), {
+           zoom: 12,
+           center: location
+         });
+         var marker = new google.maps.Marker({
+           position: location,
+           map: map
+         });
+       }
+     </script>
+     <script async defer
+     src="https://maps.googleapis.com/maps/api/js?key={{key}}&callback=initMap">
+     </script>
+
+    {% endblock %}

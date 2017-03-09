@@ -1,16 +1,76 @@
 /*base.html.twig styling*/
 body {
-    background-image: url(/../img/rsvparty.png);
+    background-image: url(/../img/rsvpartybackground2.png);
     background-repeat: no-repeat;
-    background-position: center;
+    background-size: cover;
+    /*background-size: 150vw;*/
+    background-attachment: fixed;
+    background-position: bottom;
+    font-family: 'Istok Web', sans-serif;
 }
-.jumbotron {
+
+a {
+    color: #3DC7EA;
+}
+
+#error-msg {
+    padding-bottom: : -5px;
+}
+
+#error-container {
     text-align: center;
 }
 
-.jumbotron h1 {
+#error-img {
+    padding: 2px;
+}
+
+#logo {
+    margin-top: -85px;
+    width: 600px;
+}
+
+#logotron {
+    height: 300px;
+    text-align: center;
+}
+
+.btn-top {
+	border: 2px solid #86DCEF;
+	color: #3DC7EA;
+}
+
+.btn-top:hover {
+    color: #FCB2CD;
+}
+
+.container {
+    margin-top: -100px;
+}
+
+.contentbox {
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 14px;
+    margin-right: 10px;
 
 }
+
+.events-header{
+    text-align: center;
+    font-size: 50px;
+}
+
+.events-header2 {
+    text-align: center;
+    margin-top: -10px;
+}
+
+
+.btn {
+    background: none;
+}
+
 .navbar {
     padding-top: 2%;
     text-align: center;
@@ -31,4 +91,12 @@ body {
 
 .nav-login {
     display: inline-block;
+}
+
+.error-field {
+
+}
+
+#error-text {
+
 }
